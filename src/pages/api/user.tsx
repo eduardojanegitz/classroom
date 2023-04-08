@@ -6,11 +6,17 @@ interface ErrorResponseType {
 }
 
 interface SuccessResponseType {
-    _id: string,
+    id: string,
     name: string,
     email: string,
     phone: string,
     teacher: boolean,
+    coins: 1,
+    courses: string[],
+    available_hours: object,
+    available_locations: string[],
+    reviews: object[],
+    appointments: object[];
 }
 
 export default async (
@@ -33,7 +39,7 @@ export default async (
             appointments
         } = req.body;
 
-        if (teacher) {
+        if (!teacher) {
             if (!name || !email || !phone) {
                 res.status(400).json({ error: 'Missing body parameter' });
                 return;
@@ -61,7 +67,7 @@ export default async (
             teacher,
             coins: 1,
             courses: courses || [],
-            available_hours: available_hours || [],
+            available_hours: available_hours || {},
             available_locations: available_locations || [],
             reviews: [],
             appointments: []
@@ -70,7 +76,7 @@ export default async (
     } else if (req.method === "GET") {
         const { email } = req.body;
 
-        if(!email) {
+        if (!email) {
             res.status(400).json({ error: "Missing e-mail on request body" });
             return;
         }
@@ -79,7 +85,7 @@ export default async (
 
         const response = await db.collection('users').findOne({ email })
 
-        if(!response) {
+        if (!response) {
             res.status(400).json({ error: "User with is e-mail not found" })
             return;
         }

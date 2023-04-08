@@ -12,6 +12,12 @@ interface SuccessResponseType {
     email: string,
     phone: string,
     teacher: boolean,
+    coins: 1,
+    courses: string[],
+    available_hours: object,
+    available_locations: string[],
+    reviews: object[],
+    appointments: object[];
 }
 
 export default async (
@@ -28,6 +34,10 @@ export default async (
         }
 
         const { db } = await connect();
+
+        if( id.length > 24) {
+            res.status(400).json({ error: "Argument passed in must be a single String of 12 bytes or a string of 24 hex characters at new ObjectID " })
+        }
 
         const response = await db.collection('users').findOne({"_id": new ObjectID(id)})
 
