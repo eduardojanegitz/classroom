@@ -45,7 +45,8 @@ export default async (
                 return;
             }
         } else if (teacher) {
-            if (!name ||
+            if (
+                !name ||
                 !email ||
                 !phone ||
                 !courses ||
@@ -72,7 +73,7 @@ export default async (
             reviews: [],
             appointments: []
         })
-        res.status(200).json(response.ops[0])
+        res.status(201).json(response.ops[0])
     } else if (req.method === "GET") {
         const { email } = req.body;
 
