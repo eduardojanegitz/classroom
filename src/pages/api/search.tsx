@@ -5,26 +5,24 @@ interface ErrorResponseType {
     error: string
 }
 
-
-
 export default async (
     req: NextApiRequest,
     res: NextApiResponse<ErrorResponseType | Object[]>
 ): Promise<void> => {
 
-   if (req.method === "GET") {
+    if (req.method === "GET") {
         const { courses } = req.body;
 
-        if(!courses) {
+        if (!courses) {
             res.status(400).json({ error: "Missing course name on request body" });
             return;
         }
 
         const { db } = await connect();
 
-        const response = await db.collection('users').find({courses}).toArray();
+        const response = await db.collection('users').find({ courses: { $inc: [new RegExp(`^${courses}`, 'i')] } }).toArray();
 
-        if(response.length === 0) {
+        if (response.length === 0) {
             res.status(400).json({ error: "Teacher not found" })
             return;
         }
