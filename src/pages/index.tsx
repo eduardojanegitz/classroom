@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import { useSession, signIn, signOut } from "next-auth/react"
+import Nav from '../components/Nav'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -122,6 +123,7 @@ export default function Home() {
             if (session) {
       return (
         <>
+        <Nav />
           Signed in as {session.user.email} <br />
           <button onClick={() => signOut()}>Sign out</button>
         </>

@@ -1,14 +1,12 @@
-import { Inter } from 'next/font/google'
 import { useSession, signIn, signOut } from "next-auth/react"
 
-const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
+export default function SearchPage() {
   const { data: session, status } = useSession()
   if (session) {
       return (
           <>
-          <h2>Bemvindo</h2>
+          <h2>Bem-vindo à pagina de pesquisa</h2>
           Signed in as {session.user.email} <br />
           <button onClick={() => signOut()}>Sign out</button>
         </>
