@@ -34,7 +34,7 @@ export default function Home() {
         <h2>Bemvindo</h2>
         <p>Nome: {data.data.name}</p>
         <p>Coins: {data.data.coins}</p>
-        Signed in as {session.user.email} <br />
+        Signed in as {session?.user.email} <br />
         <button onClick={() => signOut()}>Sign out</button>
       </>
     )

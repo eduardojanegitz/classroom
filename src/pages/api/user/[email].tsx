@@ -11,7 +11,7 @@ interface SuccessResponseType {
     email: string,
     phone: string,
     teacher: boolean,
-    coins: 1,
+    coins: number,
     courses: string[],
     available_hours: object,
     available_locations: string[],
