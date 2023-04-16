@@ -1,22 +1,30 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import connect from '../../../utils/database';
 
+interface IAvailableHours {
+    monday: number[];
+    tuesday: number[];
+    wednesday: number[];
+    thursday: number[];
+    friday: number[];
+}
+
 interface ErrorResponseType {
     error: string
 }
 
 interface SuccessResponseType {
-    id: string,
-    name: string,
-    email: string,
-    phone: string,
-    teacher: boolean,
-    coins: 1,
-    courses: string[],
-    available_hours: object,
-    available_locations: string[],
-    reviews: object[],
-    appointments: object[];
+    _id: string;
+    name: string;
+    email: string;
+    phone: string;
+    teacher: boolean;
+    coins: number;
+    courses: string[];
+    available_hours: IAvailableHours;
+    available_locations: string[];
+    reviews: Record<string, unknown>[];
+    appointments: Record<string, unknown>[];
 }
 
 export default async (
@@ -25,19 +33,38 @@ export default async (
 ): Promise<void> => {
 
     if (req.method === "POST") {
-
         const {
             name,
             email,
             phone,
             teacher,
-            coins,
             courses,
-            available_hours,
             available_locations,
-            reviews,
-            appointments
+            available_hours
+        }: {
+            name: string;
+            email: string;
+            phone: string;
+            teacher: boolean;
+            courses: string[];
+            available_locations: string[];
+            available_hours: IAvailableHours;
         } = req.body;
+
+        let invalidHour = false;
+        for (const dayOfTheWeek in available_hours) {
+            available_hours[dayOfTheWeek].forEach((hour) => {
+                if (hour < 7 || hour > 20) {
+                    invalidHour = true;
+                    return;
+                }
+            });
+        }
+
+        if (invalidHour) {
+            res.status(400).json({ error: "You cannot teach between 7h and 20h" });
+            return;
+        }
 
         if (!teacher) {
             if (!name || !email || !phone) {
@@ -51,9 +78,8 @@ export default async (
                 !phone ||
                 !courses ||
                 !available_hours ||
-                !available_locations ||
-                !reviews ||
-                !appointments) {
+                !available_locations
+            ) {
                 res.status(400).json({ error: 'Missing body parameter' });
                 return;
             }
@@ -74,26 +100,26 @@ export default async (
             appointments: []
         })
         res.status(201).json(response.ops[0])
-    // } else if (req.method === "GET") {
-    //     const { email } = req.body;
+        // } else if (req.method === "GET") {
+        //     const { email } = req.body;
 
-    //     if (!email) {
-    //         res.status(400).json({ error: "Missing e-mail on request body" });
-    //         return;
-    //     }
+        //     if (!email) {
+        //         res.status(400).json({ error: "Missing e-mail on request body" });
+        //         return;
+        //     }
 
-    //     const { db } = await connect();
+        //     const { db } = await connect();
 
-    //     const response = await db.collection('users').findOne({ email })
+        //     const response = await db.collection('users').findOne({ email })
 
-    //     if (!response) {
-    //         res.status(400).json({ error: "User with is e-mail not found" })
-    //         return;
-    //     }
-    //     res.status(200).json(response)
-    // }
+        //     if (!response) {
+        //         res.status(400).json({ error: "User with is e-mail not found" })
+        //         return;
+        //     }
+        //     res.status(200).json(response)
+        // }
 
-    }else {
+    } else {
         res.status(400).json({ error: "Wrong request method" })
     }
 
