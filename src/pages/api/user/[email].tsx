@@ -6,17 +6,17 @@ interface ErrorResponseType {
 }
 
 interface SuccessResponseType {
-    id: string,
-    name: string,
-    email: string,
-    phone: string,
-    teacher: boolean,
-    coins: number,
-    courses: string[],
-    available_hours: object,
-    available_locations: string[],
-    reviews: object[],
-    appointments: object[];
+    _id: string;
+    name: string;
+    email: string;
+    phone: string;
+    teacher: boolean;
+    coins: number;
+    courses: string[];
+    available_hours: Record<string, number[]>;
+    available_locations: string[];
+    reviews: Record<string, unknown[]>;
+    appointments: Record<string, unknown[]>;
 }
 
 export default async (
@@ -35,10 +35,10 @@ export default async (
 
         const { db } = await connect();
 
-        const response = await db.collection('users').findOne({ email })
+        const response = await db.collection('users').findOne({ email });
 
-        if (!response) {
-            res.status(400).json({ error: "User with this e-mail not found" })
+        if (!response) {    
+            res.status(400).json({ error: `User with ${email} e-mail not found` });
             return;
         }
         res.status(200).json(response)
